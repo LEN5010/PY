@@ -1,0 +1,32 @@
+[
+    {
+        "rank": "1",
+        "date": "2025-05-08",
+        "player_id": "遐蝶",
+        "score": 10000
+    },
+    {
+        "rank": "2",
+        "date": "2025-05-08",
+        "player_id": "LEN",
+        "score": 9999
+    },
+    {
+        "rank": "3",
+        "date": "2025-05-08",
+        "player_id": "测试玩家",
+        "score": 11
+    },
+    {
+        "rank": "3",
+        "date": null,
+        "player_id": null,
+        "score": null
+    },
+    {
+        "rank": "4",
+        "date": null,
+        "player_id": null,
+        "score": null
+    }
+]
