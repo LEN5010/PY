@@ -14,19 +14,19 @@
     {
         "rank": "3",
         "date": "2025-05-08",
-        "player_id": "测试玩家",
-        "score": 11
-    },
-    {
-        "rank": "3",
-        "date": null,
-        "player_id": null,
-        "score": null
+        "player_id": "徐出",
+        "score": 12
     },
     {
         "rank": "4",
-        "date": null,
-        "player_id": null,
-        "score": null
+        "date": "2025-05-08",
+        "player_id": "蔡铭达(唐)",
+        "score": 1
+    },
+    {
+        "rank": "5",
+        "date": "2025-05-08",
+        "player_id": "徐申",
+        "score": 0
     }
 ]
