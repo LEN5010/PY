@@ -1,8 +1,6 @@
 import tkinter as tk
-import random
+import random,hashlib,json
 from tkinter import messagebox
-import hashlib
-import json
 
 class App(tk.Tk):
 
@@ -15,9 +13,10 @@ class App(tk.Tk):
         self.score = 10
         self.que_now = None
         self.time = None
-        self.difficulty = tk.StringVar()       #追踪dif的值
-        self.difficulty.set("简单")           #避免没有初始的选择
+        self.difficulty = tk.StringVar()     # 追踪dif的值
+        self.difficulty.set("简单")          # 避免没有初始的选择
         self.questions = que
+        self.is_time_running = False       # 这个用来判断时间减少逻辑是否运行过了
         # 初始化
 
         start_button = tk.Button(self, text="开始游戏", command=self.start_game)
@@ -69,13 +68,15 @@ class App(tk.Tk):
         self.difficulty_menu.pack_forget()
         # 开始计算时间
         self.time = self.time_limit()
-        self.time_continue()
+        if self.is_time_running == False:
+            self.is_time_running = True
+            self.time_continue()
+        # 只调用一次时间计算逻辑,否则答n题之后会每秒减少n个时间
 
 
     def get_random_que(self):
         fque = [q for q in self.questions if q["puz_dif"] == self.difficulty.get()]
         return random.choice(fque)
-
     def on_click(self):
         input_text = self.ipt_ans.get()
         ans_hash = hashlib.sha256(input_text.encode()).hexdigest()
