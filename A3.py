@@ -12,9 +12,9 @@ DATA_DIR = os.path.join(BASE_DIR, 'data/A3')  # 数据目录，存放文本文�
 OUTPUT_DIR = os.path.join(BASE_DIR, 'output')  # 输出目录，存放生成的图片
 os.makedirs(OUTPUT_DIR, exist_ok=True)  # 确保输出目录存在，不存在则创建
 
-# 设置字体和自定义词典路径
-FONT_PATH = os.path.join(BASE_DIR, 'data/SourceHanSansHWSC-Regular.otf')  # 字体文件路径
-DICT_PATH = os.path.join(DATA_DIR, '自定义词典.txt')  # 自定义词典路径
+# 设置字体和自定义词典
+FONT_PATH = os.path.join(BASE_DIR, 'data/SourceHanSansHWSC-Regular.otf')
+DICT_PATH = os.path.join(DATA_DIR, '自定义词典.txt')
 
 # 读取西游记文本
 with open(os.path.join(DATA_DIR, '西游记.txt'), 'r', encoding='gb18030') as f:
