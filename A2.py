@@ -1,7 +1,7 @@
 import tkinter as tk
 import random,hashlib,json
 from tkinter import messagebox
-import datetime
+import datetime,os
 
 COLORS = {
     "bg": "#F0F4F8",           # 背景色
@@ -13,8 +13,12 @@ COLORS = {
     "border": "#DADCE0"        # 边框色
 }
 
-FONT = ("PY/data/SourceHanSansHWSC-Regular.otf", 12)
-HEADER_FONT = ("PY/data/SourceHanSansHWSC-Regular.otf", 14, "bold")
+# 使用相对路径设置,这里改成os.path.join,这样其他系统也可以运行
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本所在目录
+DATA_DIR = os.path.join(BASE_DIR, 'data')  # 数据目录
+FONT_PATH = os.path.join(BASE_DIR, 'data', 'SourceHanSansHWSC-Regular.otf')
+FONT = (FONT_PATH, 12)
+HEADER_FONT = (FONT_PATH, 14, "bold")
 
 class App(tk.Tk):
 
@@ -224,7 +228,8 @@ class App(tk.Tk):
             }
             # 保存到文件
             try:
-                with open("PY/data/A2_puzze/ranking.json", "w", encoding="utf-8") as f:
+                ranking_path = os.path.join(BASE_DIR, 'data', 'A2_puzze', 'ranking.json')
+                with open(ranking_path, "w", encoding="utf-8") as f:
                     json.dump(self.ranking, f, ensure_ascii=False, indent=4)
                 return True
             except Exception as e:
@@ -283,7 +288,8 @@ class App(tk.Tk):
         
 def load_questions():
     try:
-        with open("/Users/len5010/Desktop/code/PY/data/A2_puzze/puzzle.json", "r", encoding="utf-8") as f:
+        puzzle_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'A2_puzze', 'puzzle.json')
+        with open(puzzle_path, "r", encoding="utf-8") as f:
             questions = json.load(f)  # 读取为Python列表（包含字典）
         return questions
     except FileNotFoundError:
@@ -291,7 +297,8 @@ def load_questions():
 
 def load_rank():
     try:
-        with open("/Users/len5010/Desktop/code/PY/data/A2_puzze/ranking.json", "r", encoding="utf-8") as f:
+        ranking_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'A2_puzze', 'ranking.json')
+        with open(ranking_path, "r", encoding="utf-8") as f:
             ranking = json.load(f)  # 读取为Python列表（包含字典）
         return ranking
     except FileNotFoundError:

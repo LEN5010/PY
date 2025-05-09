@@ -6,14 +6,14 @@ import networkx as nx
 from PIL import Image, ImageDraw
 from matplotlib.font_manager import FontProperties
 
-# 设置文件路径
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本所在目录
-DATA_DIR = os.path.join(BASE_DIR, 'data/A3')  # 数据目录，存放文本文件
+# 设置文件路径,这里改成os.path.join,这样其他系统也可以运行
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))       # 获取当前脚本所在目录
+DATA_DIR = os.path.join(BASE_DIR, 'data', 'A3')            # 数据目录，存放文本文件
 OUTPUT_DIR = os.path.join(BASE_DIR, 'output')  # 输出目录，存放生成的图片
 os.makedirs(OUTPUT_DIR, exist_ok=True)  # 确保输出目录存在，不存在则创建
 
 # 设置字体和自定义词典
-FONT_PATH = os.path.join(BASE_DIR, 'data/SourceHanSansHWSC-Regular.otf')
+FONT_PATH = os.path.join(BASE_DIR, 'data', 'SourceHanSansHWSC-Regular.otf')
 DICT_PATH = os.path.join(DATA_DIR, '自定义词典.txt')
 
 # 读取西游记文本

@@ -10,7 +10,7 @@ def add_watermark(img_bytes: bytes, text: str, pos: int = 4) -> bytes:
 
     fsize = max(12, int(img.width * 0.035))
     try:
-        font_path = os.path.join(os.path.dirname(__file__), "data/SourceHanSansHWSC-Regular.otf")   #用data里的思源黑体
+        font_path = os.path.join(os.path.dirname(__file__), "data", "SourceHanSansHWSC-Regular.otf")   #用data里的思源黑体
         font = ImageFont.truetype(font_path, fsize)
     except OSError:
         font = ImageFont.load_default()
@@ -46,6 +46,7 @@ def download(keyword,pn,startid,pos):
     resp = requests.get(url,headers=ua)                                              #发送请求
     water_txt = "网安2301 刘毅凡 34"                                                   #水印参数
     save_dir = os.path.join(os.path.expanduser("~/Downloads/len5010"), keyword)      #默认下载路径
+    #这里改成os.path.join,这样其他系统也可以运行
     os.makedirs(save_dir, exist_ok=True)                                             #没有就自动创建
 
     #——————————抓url——————————
