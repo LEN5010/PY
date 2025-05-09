@@ -13,8 +13,8 @@ COLORS = {
     "border": "#DADCE0"        # 边框色
 }
 
-FONT = ("/Users/len5010/Desktop/code/PY/data/SourceHanSansHWSC-Regular.otf", 12)
-HEADER_FONT = ("/Users/len5010/Desktop/code/PY/data/SourceHanSansHWSC-Regular.otf", 14, "bold")
+FONT = ("PY/data/SourceHanSansHWSC-Regular.otf", 12)
+HEADER_FONT = ("PY/data/SourceHanSansHWSC-Regular.otf", 14, "bold")
 
 class App(tk.Tk):
 
@@ -224,7 +224,7 @@ class App(tk.Tk):
             }
             # 保存到文件
             try:
-                with open("/Users/len5010/Desktop/code/PY/data/A2_puzze/ranking.json", "w", encoding="utf-8") as f:
+                with open("PY/data/A2_puzze/ranking.json", "w", encoding="utf-8") as f:
                     json.dump(self.ranking, f, ensure_ascii=False, indent=4)
                 return True
             except Exception as e:
