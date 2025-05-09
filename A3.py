@@ -1,16 +1,11 @@
-import jieba  # 中文分词库
-import re  # 正则表达式库
-import collections  # 提供如Counter等数据结构
-import numpy as np  # 数值计算库
-import matplotlib.pyplot as plt  # 绘图库
-from wordcloud import WordCloud  # 词云生成库
-import networkx as nx  # 网络图分析库
-from PIL import Image, ImageDraw  # 图像处理库
-import os  # 操作系统接口
-import matplotlib  # 绘图配置
-from matplotlib.font_manager import FontProperties  # 字体管理
+import jieba,os,matplotlib,re,collections
+import numpy as np
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import networkx as nx
+from PIL import Image, ImageDraw
+from matplotlib.font_manager import FontProperties
 
-# 使用相对路径设置
 # 设置文件路径
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本所在目录
 DATA_DIR = os.path.join(BASE_DIR, 'data/A3')  # 数据目录，存放文本文件
@@ -26,7 +21,6 @@ with open(os.path.join(DATA_DIR, '西游记.txt'), 'r', encoding='gb18030') as f
     content = f.read()  # 读取全部内容到content变量
 
 # 建立人物别名字典，用于将不同称呼映射到标准人物名称
-# 格式：'标准名称': ['别名1', '别名2', ...]
 name_dict = {
     '唐僧': ['唐僧', '唐三藏', '玄奘', '金蝉子', '三藏'],
     '孙悟空': ['孙悟空', '悟空', '齐天大圣', '美猴王', '猴王', '孙行者', '行者', '猴子'],
@@ -81,7 +75,7 @@ for word, count in word_counts.items():
             else:
                 filtered_word_counts[standard_name] = count
         else:
-            # 非人物名，直接添加到词频字典
+            # 不是人物名直接添加到词频字典
             filtered_word_counts[word] = count
 
 # 提取前24个人物，首先筛选出所有在词频表中出现的人物
@@ -114,37 +108,31 @@ for word, count in sorted_words[:20]:
 
 print(f"使用字体: {FONT_PATH}")
 
-# ================== 词云图形状和样式设置 ==================
+#————————————词云图设置————————————
 
 # 词云形状选择交互界面
 print("\n请选择词云图的形状:")
 print("1. 矩形")
 print("2. 圆形")
-print("3. 西游记相关形状")
-print("4. 猴子形状 (内置)")
-print("5. 佛像形状 (内置)")
-shape_choice = input("请输入选择(1-5), 默认为1: ").strip()
+print("3. 猴子形状")
+shape_choice = input("请输入选择(1-3), 默认为1: ").strip()
 
 # 背景颜色选择交互界面
 print("\n请选择词云图的背景颜色:")
 print("1. 白色 (默认)")
 print("2. 黑色")
-print("3. 淡蓝色")
-print("4. 淡黄色")
-print("5. 自定义颜色")
-color_choice = input("请输入选择(1-5), 默认为1: ").strip()
+print("3. 自定义颜色(自行输入)")
+color_choice = input("请输入选择(1-3), 默认为1: ").strip()
 
 # 颜色映射主题选择交互界面
 print("\n请选择词云图的颜色主题:")
 print("1. 默认")
 print("2. 彩虹")
-print("3. 蓝色系")
-print("4. 红色系")
-print("5. 绿色系")
-colormap_choice = input("请输入选择(1-5), 默认为1: ").strip()
+print("3. 红色系")
+colormap_choice = input("请输入选择(1-3), 默认为1: ").strip()
 
-# 根据用户选择设置词云形状的蒙版
-mask = None  # 蒙版变量，用于控制词云形状
+# 根据用户选择设置词云形状
+mask = None  # 用于控制词云形状
 
 if shape_choice == '2':
     # 生成圆形蒙版
@@ -159,19 +147,6 @@ if shape_choice == '2':
     mask[circle_mask] = 0  # 在圆形区域内设置为黑色
     print("已选择圆形词云")
 elif shape_choice == '3':
-    # 使用外部图片作为蒙版
-    mask_path = input("请输入图片路径(如猴子、佛像等西游记相关图片): ").strip()
-    if os.path.exists(mask_path):
-        try:
-            mask_img = np.array(Image.open(mask_path).convert('L'))  # 转为灰度图并转换为numpy数组
-            mask = 255 - mask_img  # 反转颜色，黑色区域为绘制区域
-            print(f"已加载形状: {mask_path}")
-        except Exception as e:
-            print(f"图片加载失败: {e}，使用默认矩形")
-            mask = None
-    else:
-        print("图片路径不存在，使用默认矩形")
-elif shape_choice == '4':
     # 创建简化版猴子形状蒙版
     mask = np.zeros((800, 800), dtype=np.uint8)  # 创建黑色底板
     # 猴子头部 - 使用圆形表示
@@ -189,22 +164,6 @@ elif shape_choice == '4':
     # 合并所有部分形成猴子形状
     mask[head_mask | ear1_mask | ear2_mask] = 255  # 在相应区域设置为白色
     print("已选择猴子形状词云")
-elif shape_choice == '5':
-    # 创建简化版佛像形状蒙版
-    mask = np.zeros((800, 800), dtype=np.uint8)  # 创建黑色底板
-    # 佛像头部 - 使用圆形表示
-    center = (400, 300)
-    radius = 180
-    y, x = np.ogrid[:800, :800]
-    head_mask = ((x - center[0]) ** 2 + (y - center[1]) ** 2 <= radius ** 2)
-    # 佛像身体 - 使用梯形表示
-    body_points = np.array([[250, 450], [550, 450], [600, 750], [200, 750]])
-    img = Image.new('L', (800, 800), 0)  # 创建临时图像来绘制多边形
-    ImageDraw.Draw(img).polygon(body_points.flatten().tolist(), fill=1)  # 绘制多边形
-    body_mask = np.array(img) > 0  # 转换为布尔蒙版
-    # 合并所有部分形成佛像形状
-    mask[head_mask | body_mask] = 255  # 在相应区域设置为白色
-    print("已选择佛像形状词云")
 else:
     print("使用默认矩形词云")
 
@@ -212,14 +171,7 @@ else:
 bg_color = 'white'  # 默认白色背景
 if color_choice == '2':
     bg_color = 'black'
-    print("已选择黑色背景")
 elif color_choice == '3':
-    bg_color = 'lightblue'
-    print("已选择淡蓝色背景")
-elif color_choice == '4':
-    bg_color = 'lightyellow'
-    print("已选择淡黄色背景")
-elif color_choice == '5':
     bg_color_input = input("请输入自定义颜色(如red, #FF0000): ").strip()
     bg_color = bg_color_input if bg_color_input else 'white'
     print(f"已选择自定义背景色: {bg_color}")
@@ -230,16 +182,10 @@ if colormap_choice == '2':
     colormap = 'rainbow'  # 彩虹色系
     print("已选择彩虹色主题")
 elif colormap_choice == '3':
-    colormap = 'Blues'  # 蓝色系
-    print("已选择蓝色系主题")
-elif colormap_choice == '4':
     colormap = 'Reds'  # 红色系
     print("已选择红色系主题")
-elif colormap_choice == '5':
-    colormap = 'Greens'  # 绿色系
-    print("已选择绿色系主题")
 
-# ================== 生成词云图 ==================
+#————————这一段是生成词云图————————
 
 # 准备词云参数字典
 wordcloud_params = {
@@ -289,8 +235,6 @@ with open(os.path.join(OUTPUT_DIR, "词云配置.txt"), "w", encoding="utf-8") a
 
 #————————接下来是人物关系处理——————————
 
-# ================== 人物共现关系分析 ==================
-
 # 分段处理文本，使用空行分割段落
 paragraphs = re.split(r'\n+', content)
 relationships = {}  # 存储人物关系的嵌套字典
@@ -318,7 +262,7 @@ for paragraph in paragraphs:
             relationships[characters_list[i]][characters_list[j]] += 1
             relationships[characters_list[j]][characters_list[i]] += 1  # 对称关系
 
-# ================== 构建人物关系网络图 ==================
+#————————这一段是构建人物关系网络图————————
 
 # 创建无向图对象
 G = nx.Graph()
