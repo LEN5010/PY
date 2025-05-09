@@ -281,8 +281,8 @@ for name1, related in relationships.items():
 node_sizes = [G.nodes[character]['weight'] * 5 for character in G.nodes]
 max_node_size = max(node_sizes)
 min_node_size = min(node_sizes)
-# 缩放节点大小到合理范围(100-500)，避免极大或极小节点
-node_sizes = [100 + (ns - min_node_size) * 400 / (max_node_size - min_node_size) for ns in node_sizes]
+# 缩放节点大小到范围(100-1000)，避免极大或极小节点(测试的时候出现了问题)
+node_sizes = [100 + (ns - min_node_size) * 1000 / (max_node_size - min_node_size) for ns in node_sizes]
 
 # 设置边的宽度，基于共现频率
 edge_weights = [G[u][v]['weight'] * 0.2 for u, v in G.edges]
@@ -294,7 +294,7 @@ font_prop = FontProperties(fname=FONT_PATH)
 
 # 绘制网络图
 plt.figure(figsize=(16, 12))  # 创建大尺寸图形
-pos = nx.kamada_kawai_layout(G)  # 使用Kamada-Kawai算法计算节点位置，减少节点重叠
+pos = nx.kamada_kawai_layout(G)  # 使用Kamada-Kawai算法计算节点位置，减少节点重叠,这个确实一开始没想到
 
 # 绘制节点
 nx.draw_networkx_nodes(G, pos, node_size=node_sizes, node_color="skyblue", alpha=0.8)
@@ -310,7 +310,7 @@ for node, (x, y) in pos.items():
 
 # 添加标题
 plt.title("西游记人物关系网络图", fontproperties=font_prop, fontsize=18)
-plt.axis("off")  # 不显示坐标轴
+plt.axis("on")  # 不显示坐标轴
 
 # 保存网络图到文件
 plt.savefig(os.path.join(OUTPUT_DIR, "西游记人物关系网络图.png"), dpi=300, bbox_inches='tight')
