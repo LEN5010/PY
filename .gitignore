@@ -1,6 +1,5 @@
 .DS_Store
 data/A2_puzze/ranking.json
 data/A2_puzze/puzzle.json
-data/*
 output/*.png
 output/*.txt
