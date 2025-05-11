@@ -201,11 +201,11 @@ class App(tk.Tk):
         ms_result = ms_dec(self.encrypted_ms)
         pg_result = pg_dec(self.encrypted_pg)
 
-        self.result_wj = tk.Label(self, text="维吉尼亚密码: "+wj_result, font=FONT, bg=COLORS["bg"])
+        self.result_wj = tk.Label(self, text="维吉尼亚解密: "+wj_result, font=FONT, bg=COLORS["bg"])
         self.result_wj.pack(pady=(20,10))
-        self.result_ms = tk.Label(self, text="莫斯密码: "+ms_result, font=FONT, bg=COLORS["bg"])
+        self.result_ms = tk.Label(self, text="莫斯解密: "+ms_result, font=FONT, bg=COLORS["bg"])
         self.result_ms.pack(pady=10)
-        self.result_pg = tk.Label(self, text="培根密码: "+pg_result, font=FONT, bg=COLORS["bg"])
+        self.result_pg = tk.Label(self, text="培根解密: "+pg_result, font=FONT, bg=COLORS["bg"])
         self.result_pg.pack(pady=10)
         
         self.back_button.pack(pady=10)
