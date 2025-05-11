@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import random,hashlib,json
 from tkinter import messagebox
 import datetime,os,time
@@ -25,7 +26,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("神秘密码程序")
-        self.geometry("500x350+230+200")
+        self.geometry("600x450+230+200")
         self.configure(bg=COLORS["bg"]) 
         # 创建窗口
 
@@ -56,9 +57,17 @@ class App(tk.Tk):
         input_key.pack(pady=20)
 
         back_button = tk.Button(
-            self, text="返回", command=self.reset_interface,
-            bg=COLORS["primary"], fg=COLORS["dark"], borderwidth=0
+            self, text="返回",
+            command=self.reset_interface,
+            font=FONT,
+            bg=COLORS["primary"],
+            fg=COLORS["dark"],
+            borderwidth=0
         )
+
+        # 搞一个假的进度条
+        self.progress = ttk.Progressbar(self, orient="horizontal", length=300, mode="determinate")
+
         # 写一个返回逻辑
         self.back_button = back_button
         # 这个用来调用forget
@@ -94,8 +103,8 @@ class App(tk.Tk):
             messagebox.showinfo("提示", "请输入字符或密钥!")
             return
         else:
-            self.label.config(text="解密中",)
-            #开始解密
+            self.label.config(text="加密中...",)
+            #开始加密
             self.label.pack(pady=(40,0))
             # 删掉之前的按钮
             self.start_button.pack_forget()
@@ -104,42 +113,122 @@ class App(tk.Tk):
             self.id_label.pack_forget()
             self.wj_label.pack_forget()
 
-            #调用计算逻辑(之后实现)
-            #compute_enc(text,key)
-
             #在这里增加一个假的进度条
+            self.progress.pack(pady=(20,20))
             for i in range(100):
-                self.label.config(text=f"解密中{i}%")
+                self.progress["value"] = i+1
                 self.update()
                 time.sleep(0.01)
 
-            #解密完成
-            self.label.config(text="解密完成")
+            #加密完成
+            self.label.config(text="加密完成")
             self.label.pack()
 
-            # 点击按钮显示解密结果
+            # 点击按钮显示加密结果
             self.show_result_button.pack()
 
     def show_result(self):
-
+        
+        # 计算加密结果
+        text = self.input_text.get()
+        key = self.input_key.get()
+        wj_result = vj_enc(text, key)
+        ms_result = ms_enc(text)
+        pg_result = pg_enc(text)
+        
         # 移除之前的组件
+        self.progress.pack_forget()
         self.show_result_button.pack_forget()
 
-        # 显示解密结果
-        self.label.config(text="解密结果")
+        # 显示解密标题
+        self.label.config(text="加密结果:",font=HEADER_FONT, bg=COLORS["bg"])
         self.label.pack(pady=30)
+
+        # 显示解密结果
+        self.result_wj = tk.Label(self, text="维吉尼亚密码: "+wj_result, font=FONT, bg=COLORS["bg"])
+        self.result_wj.pack(pady=10)
+        self.result_ms = tk.Label(self, text="莫斯密码: "+ms_result, font=FONT, bg=COLORS["bg"])
+        self.result_ms.pack(pady=10)
+        self.result_pg = tk.Label(self, text="培根密码: "+pg_result, font=FONT, bg=COLORS["bg"])
+        self.result_pg.pack(pady=10)
+
 
         self.back_button.pack(pady=10)
     
     def reset_interface(self):
         #重置界面，恢复输入状态
         self.back_button.pack_forget()
+        self.result_wj.pack_forget()
+        self.result_ms.pack_forget()
+        self.result_pg.pack_forget()
         self.label.pack_forget()
         self.id_label.pack(pady=(30, 0))
         self.input_text.pack(pady=20)
         self.wj_label.pack()
         self.input_key.pack(pady=20)
         self.start_button.pack(pady=10)
+
+# 计算维吉尼亚加密
+def vj_enc(text, key):
+    enc_result = []
+    key_index = 0
+    key = key.upper()
+    
+    for char in text:
+        if char.isalpha():
+            # 计算位移量（密钥字母对应的数值）
+            shift = ord(key[key_index % len(key)]) - ord('A')
+            # 加密处理（区分大小写）
+            if char.isupper():
+                enc_char = chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
+            else:
+                enc_char = chr((ord(char) - ord('a') + shift) % 26 + ord('a'))
+            key_index += 1
+        else:
+            enc_char = char  # 非字母字符保持不变
+        enc_result.append(enc_char)
+    
+    return ''.join(enc_result)
+
+# 计算摩斯密码加密
+def ms_enc(text):
+    ms_code = {
+        'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
+        'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
+        'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
+        'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
+        'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..',
+        '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....',
+        '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----',
+        ' ': '/'  # 单词分隔符
+    }
+    
+    enc_result = []
+    for char in text.upper():
+        if char in ms_code:
+            enc_result.append(ms_code[char])
+        else:
+            enc_result.append(char)  # 非字母数字保持不变
+    
+    return ' '.join(enc_result)  # 字符间用空格分隔
+
+# 计算培根密码加密
+def pg_enc(text):
+    pg_code = {
+        'A': 'aaaaa', 'B': 'aaaab', 'C': 'aaaba', 'D': 'aaabb', 'E': 'aabaa',
+        'F': 'aabab', 'G': 'aabba', 'H': 'aabbb', 'I': 'abaaa', 'J': 'abaab',
+        'K': 'ababa', 'L': 'ababb', 'M': 'abbaa', 'N': 'abbab', 'O': 'abbba',
+        'P': 'abbbb', 'Q': 'baaaa', 'R': 'baaab', 'S': 'baaba', 'T': 'baabb',
+        'U': 'babaa', 'V': 'babab', 'W': 'babba', 'X': 'babbb', 'Y': 'bbaaa', 'Z': 'bbaab'
+    }
+    
+    pg_result = []
+    for char in text.upper():
+        if char.isalpha():
+            pg_result.append(pg_code.get(char, char))
+        else:
+            pg_result.append(char)  # 非字母字符保持不变
+    return ''.join(pg_result)
 
 if __name__ == "__main__":
     app = App()
